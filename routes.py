@@ -1,4 +1,5 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
+import sqlite3
 from database import insertUsuario
 
 
@@ -6,7 +7,22 @@ app = Flask("Pkm")
 
 @app.route("/pokemon", methods=["GET"])
 def encontrarPokemon():
-    return {"Pokemon": "Pikachu"}
+
+    adress = '/home/vinicius/Pokemons.db'
+    conn = sqlite3.connect(adress)
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    result = cur.execute('select * from Pok1;')
+    retorno = []
+    for row in result.fetchall():
+        item = {}
+        item['number'] = row['Number']
+        item['name'] = row['Name']
+        item['type'] = row['Type']
+        item['hp'] = row['HP']
+        retorno.append(item)
+
+    return jsonify(retorno)
 
 @app.route("/pokemon/adicionar", methods=["POST"])
 def adicionarPokemon():
