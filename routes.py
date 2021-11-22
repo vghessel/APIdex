@@ -38,9 +38,15 @@ def adicionarPokemon():
     if ("hp" not in body):
         return geraResponse(400, "O parâmetro hp é obrigatório!")
 
-    usuario = insertUsuario(body["number"], body["name"], body["type"], body["hp"])
+    adress = '/home/vinicius/Pokemons.db'
+    conn = sqlite3.connect(adress)
+    cur = conn.cursor()
+    result = cur.execute("INSERT INTO Pok1 (Number, Name, Type, HP) VALUES ('{0}', '{1}', '{2}', '{3}');".format(body["number"], body["name"], body["type"], body["hp"]))
 
-    return geraResponse(200, "Usuário criado", "user", usuario)
+    conn.commit()
+    conn.close()
+
+    return geraResponse(200, "Usuário criado", "pokemon", body["name"])
 
 def geraResponse(status, mensagem, nome_do_conteudo=False, conteudo=False):
     response = {}
