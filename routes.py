@@ -1,7 +1,5 @@
 from flask import Flask, request, jsonify
 import sqlite3
-from database import insertUsuario
-
 
 app = Flask("Pkm")
 
@@ -47,6 +45,33 @@ def adicionarPokemon():
     conn.close()
 
     return geraResponse(200, "Pokemon criado", "pokemon", body["name"])
+
+@app.route("/pokemon/atualizar/", methods=["PUT"])
+def atualizarPokemon():
+
+    adress = '/home/vinicius/Pokemons.db'
+    conn = sqlite3.connect(adress)
+    cur = conn.cursor()
+
+    body = request.get_json()
+
+    if ("number" not in body):
+        return geraResponse(400, "O parâmetro number é obrigatório!")
+
+    else:
+        if ("name" in body):
+            result = cur.execute("UPDATE Pok1 SET Name = '{0}' WHERE Number = '{1}';".format(body["name"], body["number"]))
+
+        if ("type" in body):
+            result1 = cur.execute("UPDATE Pok1 SET Type = '{0}' WHERE Number = '{1}';".format(body["type"], body["number"]))
+
+        if ("hp" in body):
+            result2 = cur.execute("UPDATE Pok1 SET HP = '{0}' WHERE Number = '{1}';".format(body["hp"], body["number"]))
+
+    conn.commit()
+    conn.close()
+
+    return geraResponse(200, "Pokemon atualizado", "pokemon", body["name"])
 
 @app.route("/pokemon/deletar", methods=["DELETE"])
 def deletarPokemon():
