@@ -46,7 +46,26 @@ def adicionarPokemon():
     conn.commit()
     conn.close()
 
-    return geraResponse(200, "Usuário criado", "pokemon", body["name"])
+    return geraResponse(200, "Pokemon criado", "pokemon", body["name"])
+
+@app.route("/pokemon/deletar", methods=["DELETE"])
+def deletarPokemon():
+
+    body = request.get_json()
+
+    if ("number" not in body):
+        return geraResponse(400, "Informar apenas o parâmetro number")
+
+    adress = '/home/vinicius/Pokemons.db'
+    conn = sqlite3.connect(adress)
+    cur = conn.cursor()
+    result = cur.execute("DELETE from Pok1 WHERE Number = '{0}';".format(body["number"]))
+
+    conn.commit()
+    conn.close()
+
+    return geraResponse(200, "Pokemon deletado", "pokemon", body["number"])
+
 
 def geraResponse(status, mensagem, nome_do_conteudo=False, conteudo=False):
     response = {}
