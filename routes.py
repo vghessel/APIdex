@@ -57,16 +57,26 @@ def atualizarPokemon():
 
     if ("number" not in body):
         return geraResponse(400, "O parâmetro number é obrigatório!")
-
     else:
+        name = 'NULL'
+        type = 'NULL'
+        hp = 'NULL'
         if ("name" in body):
-            result = cur.execute("UPDATE Pok1 SET Name = '{0}' WHERE Number = '{1}';".format(body["name"], body["number"]))
-
+            name = "'{}'".format(body["name"])
         if ("type" in body):
-            result1 = cur.execute("UPDATE Pok1 SET Type = '{0}' WHERE Number = '{1}';".format(body["type"], body["number"]))
-
+            type = "'{}'".format(body["type"])
         if ("hp" in body):
-            result2 = cur.execute("UPDATE Pok1 SET HP = '{0}' WHERE Number = '{1}';".format(body["hp"], body["number"]))
+            hp = "'{}'".format(body["hp"])
+
+        result = cur.execute('''
+        UPDATE
+          Pok1
+        SET
+          Name = coalesce({0}, Name),
+          Type = coalesce({1}, Type),
+          Hp = coalesce({2}, hp)
+        WHERE Number = '{3}';
+        '''.format(name, type, hp, body["number"]))
 
     conn.commit()
     conn.close()
