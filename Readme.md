@@ -1,1 +1,1 @@
-API using Python3, Flask and SQLite
+API using Python3, Flask and SQLite.
